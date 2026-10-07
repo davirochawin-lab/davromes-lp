@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
 import { WHATSAPP_URL } from "@/lib/whatsapp";
 
 const TITLE = "Ganhe dinheiro com Inteligência Artificial usando o celular";
@@ -31,21 +33,22 @@ function WhatsIcon() {
 
 function Cta({ className = "" }: { className?: string }) {
   return (
+    <Button asChild variant="cta" className={`w-full sm:w-auto ${className}`}>
     <a
       href={WHATSAPP_URL}
       target="_blank"
       rel="noopener noreferrer"
-      className={`btn-cta w-full sm:w-auto ${className}`}
     >
       <WhatsIcon />
       QUERO APRENDER A GANHAR DINHEIRO COM IA
     </a>
+    </Button>
   );
 }
 
 function AiOrb() {
   return (
-    <div aria-hidden="true" className="relative mx-auto aspect-square w-full max-w-md">
+    <div aria-hidden="true" className="ai-art relative mx-auto aspect-square w-full max-w-md">
       <div className="absolute inset-[18%] rounded-full bg-glow-violet/40 blur-3xl animate-pulse-soft" />
       <div className="absolute inset-[28%] rounded-full bg-glow-blue/40 blur-2xl" />
       <div className="absolute inset-0 rounded-full border border-border animate-orbit">
@@ -62,15 +65,36 @@ function AiOrb() {
 }
 
 function Index() {
+  const mainRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const sections = mainRef.current?.querySelectorAll<HTMLElement>("section");
+    if (!sections || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      }
+    }, { threshold: 0.08 });
+    sections.forEach((section, index) => {
+      if (index === 0) return;
+      section.classList.add("scroll-reveal");
+      observer.observe(section);
+    });
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className="relative overflow-hidden">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 grid-bg" />
       <div aria-hidden="true" className="pointer-events-none absolute -top-40 left-1/2 h-[480px] w-[720px] -translate-x-1/2 rounded-full bg-glow-violet/25 blur-[120px]" />
 
-      <main className="relative">
+      <main ref={mainRef} className="relative">
         {/* HERO */}
-        <section className="mx-auto grid max-w-6xl items-center gap-10 px-5 pb-16 pt-10 sm:pt-16 lg:grid-cols-[1.15fr_1fr] lg:pb-28 lg:pt-24">
-          <div>
+        <section className="hero-section mx-auto grid max-w-6xl items-center gap-8 px-5 pb-12 pt-10 sm:gap-10 sm:pt-16 lg:grid-cols-[1.15fr_1fr] lg:pb-28 lg:pt-24">
+          <div className="hero-copy min-w-0">
             <p className="glass mb-6 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
               <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse-soft" />
               Renda com Inteligência Artificial
@@ -86,7 +110,7 @@ function Index() {
               Hoje, existem diversas formas de usar ferramentas de Inteligência Artificial para criar serviços, vender soluções e encontrar novas oportunidades de renda — e muitas delas podem ser iniciadas apenas com um celular e acesso à internet.
             </p>
           </div>
-          <div className="hidden sm:block"><AiOrb /></div>
+          <div className="hero-art mx-auto w-full max-w-[240px] sm:max-w-md"><AiOrb /></div>
         </section>
 
         {/* IDENTIFICAÇÃO */}
@@ -142,9 +166,11 @@ function Index() {
 
       {/* Mobile sticky CTA */}
       <div className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/85 p-3 backdrop-blur sm:hidden">
-        <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="btn-cta w-full text-sm">
-          <WhatsIcon /> QUERO APRENDER COM IA
+        <Button asChild variant="cta" className="mobile-cta w-full text-sm">
+        <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+          <WhatsIcon /> <span>QUERO APRENDER GANHAR DINHEIRO COM IA</span>
         </a>
+        </Button>
       </div>
     </div>
   );
