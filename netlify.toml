@@ -1,5 +1,7 @@
 [build]
-  command = "bun run build"
+  # Unset NETLIFY so nitro keeps the same server preset used in Lovable; otherwise it
+  # auto-switches to its "netlify" preset and the prerender step cannot find its server.
+  command = "env -u NETLIFY bun run build"
   publish = "dist/client"
 
 [build.environment]
