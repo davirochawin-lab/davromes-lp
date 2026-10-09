@@ -68,35 +68,52 @@ function Index() {
   const mainRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const targets = mainRef.current?.querySelectorAll<HTMLElement>(
+    const candidates = mainRef.current?.querySelectorAll<HTMLElement>(
       "h1, h2, h3, p, .motion-panel, .motion-number, .hero-copy > div, .hero-art, section:last-child > div",
     );
-    if (!targets || !("IntersectionObserver" in window)) return;
+    if (!candidates || !("IntersectionObserver" in window)) return;
+    // Move a panel as one unit, never animate its text a second time.
+    const targets = Array.from(candidates).filter(
+      (target) => !target.parentElement?.closest(".motion-panel"),
+    );
+    const artwork = mainRef.current?.querySelector<HTMLElement>(".hero-art");
     const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
     let observer: IntersectionObserver | undefined;
+    let artObserver: IntersectionObserver | undefined;
     const updateMotion = () => {
       observer?.disconnect();
+      artObserver?.disconnect();
       if (motionPreference.matches) {
         targets.forEach((target) => target.classList.remove("motion-enter"));
+        artwork?.removeAttribute("data-art-active");
         return;
       }
       observer = new IntersectionObserver((entries) => {
+        let order = 0;
         for (const entry of entries) {
           if (entry.isIntersecting) {
+            const target = entry.target as HTMLElement;
+            target.dataset["motionOrder"] = String(Math.min(order++, 2));
             entry.target.classList.add("motion-enter");
             observer?.unobserve(entry.target);
           }
         }
-      }, { threshold: 0.08, rootMargin: "0px 0px -24px 0px" });
-      targets.forEach((target, index) => {
-        target.dataset["motionOrder"] = String(index % 3);
+      }, { threshold: 0, rootMargin: "0px 0px 64px 0px" });
+      targets.forEach((target) => {
         if (!target.classList.contains("motion-enter")) observer?.observe(target);
       });
+      if (artwork) {
+        artObserver = new IntersectionObserver(([entry]) => {
+          artwork.toggleAttribute("data-art-active", Boolean(entry?.isIntersecting));
+        }, { rootMargin: "80px" });
+        artObserver.observe(artwork);
+      }
     };
     updateMotion();
     motionPreference.addEventListener("change", updateMotion);
     return () => {
       observer?.disconnect();
+      artObserver?.disconnect();
       motionPreference.removeEventListener("change", updateMotion);
     };
   }, []);

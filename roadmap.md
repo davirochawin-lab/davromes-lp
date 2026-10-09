@@ -1,4 +1,5 @@
 # Requested updates
+- [x] Refine mobile motion for fluid, coordinated entrances and verify existing flows.
 - [x] Show the existing IA art on mobile and correct the fixed CTA.
 - [x] Add motion respecting reduced-motion preferences and verify mobile/desktop.
 - [x] Prepare and verify compiled Netlify ZIP and GitHub source ZIP.

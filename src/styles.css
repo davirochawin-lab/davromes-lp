@@ -56,6 +56,8 @@
   --gradient-brand: linear-gradient(120deg, oklch(0.8 0.13 295), oklch(0.74 0.14 255));
   --shadow-glow: 0 0 40px -6px oklch(0.62 0.2 290 / 55%);
   --motion-ease: cubic-bezier(.22, 1, .36, 1);
+  --motion-duration: 760ms;
+  --motion-distance: 16px;
   --gradient-sheen: linear-gradient(110deg, transparent 30%, oklch(1 0 0 / 22%) 50%, transparent 70%);
   --gradient-scan: linear-gradient(transparent, oklch(0.74 0.14 255 / 24%), transparent);
 }
@@ -120,14 +122,23 @@
 @utility animate-pulse-soft { animation: pulse-soft 4s ease-in-out infinite; }
 
 .ai-art { animation: float-art 7s ease-in-out infinite; }
+.hero-art .ai-art,
+.hero-art .animate-orbit,
+.hero-art .animate-orbit-rev,
+.hero-art .animate-pulse-soft,
+.hero-art .ai-core::before { animation-play-state: paused; }
+.hero-art[data-art-active] .ai-art,
+.hero-art[data-art-active] .animate-orbit,
+.hero-art[data-art-active] .animate-orbit-rev,
+.hero-art[data-art-active] .animate-pulse-soft,
+.hero-art[data-art-active] .ai-core::before { animation-play-state: running; }
 .motion-enter {
-  animation: enter-content 850ms var(--motion-ease) backwards;
+  animation: enter-content var(--motion-duration) var(--motion-ease) backwards;
 }
-[data-motion-order="1"].motion-enter { animation-delay: 70ms; }
-[data-motion-order="2"].motion-enter { animation-delay: 140ms; }
-.hero-art.motion-enter { animation-name: enter-art; animation-duration: 1100ms; }
-.motion-panel.motion-enter { animation-name: enter-panel; animation-duration: 1000ms; }
-.motion-number.motion-enter { animation-name: enter-number; animation-duration: 1100ms; }
+[data-motion-order="1"].motion-enter { animation-delay: 40ms; }
+[data-motion-order="2"].motion-enter { animation-delay: 80ms; }
+.hero-art.motion-enter { animation-name: enter-art; animation-duration: 950ms; }
+.motion-panel.motion-enter { animation-name: enter-panel; }
 .motion-panel { transition: border-color 400ms ease; }
 .motion-cta { position: relative; overflow: hidden; isolation: isolate; }
 .motion-cta::after {
@@ -150,15 +161,14 @@
 }
 .ai-core > span { position: relative; }
 .text-gradient { background-size: 200% 100%; animation: brand-flow 12s ease-in-out infinite; }
-.motion-number.motion-enter { animation: enter-number 1100ms var(--motion-ease) backwards, brand-flow 12s ease-in-out infinite; }
 .mobile-cta { padding: 0.8rem 1rem; min-height: 3.5rem; line-height: 1.35; }
 .mobile-cta span { min-width: 0; }
 @keyframes enter-content {
-  from { opacity: 0; transform: translateY(18px); }
+  from { opacity: .65; transform: translate3d(0, var(--motion-distance), 0); }
   to { opacity: 1; transform: translateY(0); }
 }
 @keyframes enter-art {
-  from { opacity: 0; transform: scale(.92); }
+  from { opacity: .65; transform: translate3d(0, 12px, 0) scale(.97); }
   to { opacity: 1; transform: scale(1); }
 }
 @keyframes float-art {
@@ -166,11 +176,7 @@
   50% { transform: translateY(-8px); }
 }
 @keyframes enter-panel {
-  from { opacity: .2; transform: translateY(24px) scale(.985); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-@keyframes enter-number {
-  from { opacity: 0; transform: translateY(16px) scale(.94); }
+  from { opacity: .75; transform: translate3d(0, var(--motion-distance), 0); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 @keyframes brand-flow {
@@ -185,6 +191,20 @@
   0%, 100% { transform: translateY(-100%); opacity: 0; }
   20%, 70% { opacity: 1; }
   85% { transform: translateY(100%); opacity: 0; }
+}
+
+@media (max-width: 767px) {
+  :root { --motion-duration: 640ms; --motion-distance: 10px; }
+  /* Keep scrolling on the compositor; no continuously repainted text or blur. */
+  .text-gradient { animation: none; background-size: 100% 100%; }
+  .hero-art .animate-pulse-soft { animation: none; opacity: .75; }
+  .hero-art .animate-orbit { animation-duration: 22s; }
+  .hero-art .animate-orbit-rev { animation-duration: 32s; }
+  .ai-art { animation-duration: 6s; }
+  .glass { backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .motion-cta::after { animation-duration: 10s; }
+  .mobile-cta::after { animation: none; display: none; }
+  .motion-cta:active { transform: scale(.985); }
 }
 
 @media (prefers-reduced-motion: reduce) {

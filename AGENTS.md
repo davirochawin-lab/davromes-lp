@@ -13,4 +13,5 @@
 - Pin Nitro output directories for self-hosted builds so Netlify and sandbox exports share the same static publish directory.
 - Use the shared Button CTA variant for WhatsApp links so both regular and fixed controls retain consistent focus and wrapping behavior.
 - Trigger one-time element entrance animations after hydration with IntersectionObserver without pre-hiding content; honor reduced-motion changes to preserve readability and static-hosting fallbacks.
+- Animate each motion panel as a single unit and pause artwork outside the viewport; avoid nested entrances and continuous mobile text repaints to keep scrolling smooth.
 - Netlify build command unsets NETLIFY so nitro does not auto-select its netlify preset, which breaks the prerender server entry.
