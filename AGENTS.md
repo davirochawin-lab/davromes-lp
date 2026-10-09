@@ -12,5 +12,5 @@
 - Prerender the public landing route for static hosting; its HTML contains no visitor-specific data and can be deployed without a server.
 - Pin Nitro output directories for self-hosted builds so Netlify and sandbox exports share the same static publish directory.
 - Use the shared Button CTA variant for WhatsApp links so both regular and fixed controls retain consistent focus and wrapping behavior.
-- Add scroll reveals after hydration with IntersectionObserver and keep content visible without JavaScript or with reduced motion enabled.
+- Trigger one-time element entrance animations after hydration with IntersectionObserver without pre-hiding content; honor reduced-motion changes to preserve readability and static-hosting fallbacks.
 - Netlify build command unsets NETLIFY so nitro does not auto-select its netlify preset, which breaks the prerender server entry.

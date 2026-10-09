@@ -55,6 +55,9 @@
   --glow-blue: oklch(0.62 0.17 255);
   --gradient-brand: linear-gradient(120deg, oklch(0.8 0.13 295), oklch(0.74 0.14 255));
   --shadow-glow: 0 0 40px -6px oklch(0.62 0.2 290 / 55%);
+  --motion-ease: cubic-bezier(.22, 1, .36, 1);
+  --gradient-sheen: linear-gradient(110deg, transparent 30%, oklch(1 0 0 / 22%) 50%, transparent 70%);
+  --gradient-scan: linear-gradient(transparent, oklch(0.74 0.14 255 / 24%), transparent);
 }
 
 @layer base {
@@ -116,15 +119,38 @@
 @utility animate-orbit-rev { animation: orbit 45s linear infinite reverse; }
 @utility animate-pulse-soft { animation: pulse-soft 4s ease-in-out infinite; }
 
-.hero-copy { animation: enter-content 700ms ease-out both; }
-.hero-art { animation: enter-art 1000ms ease-out both; }
 .ai-art { animation: float-art 7s ease-in-out infinite; }
-.scroll-reveal {
-  opacity: 0;
-  transform: translateY(26px);
-  transition: opacity 750ms ease, transform 750ms cubic-bezier(.2,.7,.2,1);
+.motion-enter {
+  animation: enter-content 850ms var(--motion-ease) backwards;
 }
-.scroll-reveal.is-visible { opacity: 1; transform: translateY(0); }
+[data-motion-order="1"].motion-enter { animation-delay: 70ms; }
+[data-motion-order="2"].motion-enter { animation-delay: 140ms; }
+.hero-art.motion-enter { animation-name: enter-art; animation-duration: 1100ms; }
+.motion-panel.motion-enter { animation-name: enter-panel; animation-duration: 1000ms; }
+.motion-number.motion-enter { animation-name: enter-number; animation-duration: 1100ms; }
+.motion-panel { transition: border-color 400ms ease; }
+.motion-cta { position: relative; overflow: hidden; isolation: isolate; }
+.motion-cta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--gradient-sheen);
+  transform: translateX(-120%);
+  animation: cta-sheen 8s var(--motion-ease) infinite;
+}
+.ai-core { overflow: hidden; }
+.ai-core::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--gradient-scan);
+  animation: core-scan 6s ease-in-out infinite;
+}
+.ai-core > span { position: relative; }
+.text-gradient { background-size: 200% 100%; animation: brand-flow 12s ease-in-out infinite; }
+.motion-number.motion-enter { animation: enter-number 1100ms var(--motion-ease) backwards, brand-flow 12s ease-in-out infinite; }
 .mobile-cta { padding: 0.8rem 1rem; min-height: 3.5rem; line-height: 1.35; }
 .mobile-cta span { min-width: 0; }
 @keyframes enter-content {
@@ -139,9 +165,31 @@
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
 }
+@keyframes enter-panel {
+  from { opacity: .2; transform: translateY(24px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes enter-number {
+  from { opacity: 0; transform: translateY(16px) scale(.94); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes brand-flow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes cta-sheen {
+  0%, 65% { transform: translateX(-120%); }
+  85%, 100% { transform: translateX(120%); }
+}
+@keyframes core-scan {
+  0%, 100% { transform: translateY(-100%); opacity: 0; }
+  20%, 70% { opacity: 1; }
+  85% { transform: translateY(100%); opacity: 0; }
+}
 
 @media (prefers-reduced-motion: reduce) {
-  * { animation: none !important; transition: none !important; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
   html { scroll-behavior: auto; }
-  .scroll-reveal { opacity: 1; transform: none; }
+  .motion-enter { opacity: 1; transform: none; }
+  .motion-cta::after, .ai-core::before { display: none; }
 }

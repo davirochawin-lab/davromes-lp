@@ -1,9 +1,8 @@
 # Landing Page — Ganhe dinheiro com IA
 
-## Dois arquivos de entrega
+## Entrega para GitHub e Netlify
 
-- **netlify-build-v2.zip**: site já compilado. Extraia o ZIP e arraste a pasta que contém `index.html` e `assets` para o Netlify Drop. Não envie a pasta de código-fonte para o Drop.
-- **github-source-v2.zip**: código-fonte para GitHub. Extraia o ZIP e envie o conteúdo ao repositório. Na Netlify, escolha "Import an existing project" e conecte esse repositório. O arquivo `netlify.toml` configura a compilação e a pasta de publicação automaticamente.
+- **github-source-v4.zip**: extraia e envie o conteúdo ao repositório GitHub já conectado à Netlify, substituindo os arquivos antigos. Não envie o próprio ZIP ao repositório. A Netlify publica automaticamente após o envio dos arquivos; a configuração que já funcionou foi preservada.
 
 ## Instalar e rodar localmente
 
@@ -30,7 +29,7 @@ O número e a mensagem ficam em `src/lib/whatsapp.ts`. Todos os botões usam o m
 
 ## Arte e transições
 
-A arte de IA é desenhada no próprio site com CSS e SVG, sem depender de arquivos de imagem externos. Aparece também no celular. As entradas suaves, as órbitas e as transições de rolagem respeitam a preferência por movimento reduzido do visitante. As fontes têm alternativas locais caso o Google Fonts esteja indisponível.
+A arte de IA é desenhada no próprio site com CSS e SVG, sem depender de arquivos de imagem externos. Aparece também no celular. Blocos, títulos e parágrafos têm entradas suaves, acompanhadas de órbitas, varredura luminosa na arte e brilho discreto nos botões. As transições respeitam a preferência por movimento reduzido do visitante, e o conteúdo permanece visível sem JavaScript. As fontes têm alternativas locais caso o Google Fonts esteja indisponível.
 
 ## Favicon
 

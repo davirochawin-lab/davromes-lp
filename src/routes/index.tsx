@@ -33,7 +33,7 @@ function WhatsIcon() {
 
 function Cta({ className = "" }: { className?: string }) {
   return (
-    <Button asChild variant="cta" className={`w-full sm:w-auto ${className}`}>
+    <Button asChild variant="cta" className={`motion-cta w-full sm:w-auto ${className}`}>
     <a
       href={WHATSAPP_URL}
       target="_blank"
@@ -57,7 +57,7 @@ function AiOrb() {
       <div className="absolute inset-[12%] rounded-full border border-dashed border-border animate-orbit-rev">
         <span className="absolute bottom-0 left-1/2 h-2 w-2 -translate-x-1/2 translate-y-1/2 rounded-full bg-accent" />
       </div>
-      <div className="absolute inset-[30%] glass flex items-center justify-center rounded-full">
+      <div className="ai-core absolute inset-[30%] glass flex items-center justify-center rounded-full">
         <span className="font-display text-5xl font-bold text-gradient">IA</span>
       </div>
     </div>
@@ -68,22 +68,37 @@ function Index() {
   const mainRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const sections = mainRef.current?.querySelectorAll<HTMLElement>("section");
-    if (!sections || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const observer = new IntersectionObserver((entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-visible");
-          observer.unobserve(entry.target);
-        }
+    const targets = mainRef.current?.querySelectorAll<HTMLElement>(
+      "h1, h2, h3, p, .motion-panel, .motion-number, .hero-copy > div, .hero-art, section:last-child > div",
+    );
+    if (!targets || !("IntersectionObserver" in window)) return;
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let observer: IntersectionObserver | undefined;
+    const updateMotion = () => {
+      observer?.disconnect();
+      if (motionPreference.matches) {
+        targets.forEach((target) => target.classList.remove("motion-enter"));
+        return;
       }
-    }, { threshold: 0.08 });
-    sections.forEach((section, index) => {
-      if (index === 0) return;
-      section.classList.add("scroll-reveal");
-      observer.observe(section);
-    });
-    return () => observer.disconnect();
+      observer = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("motion-enter");
+            observer?.unobserve(entry.target);
+          }
+        }
+      }, { threshold: 0.08, rootMargin: "0px 0px -24px 0px" });
+      targets.forEach((target, index) => {
+        target.dataset["motionOrder"] = String(index % 3);
+        if (!target.classList.contains("motion-enter")) observer?.observe(target);
+      });
+    };
+    updateMotion();
+    motionPreference.addEventListener("change", updateMotion);
+    return () => {
+      observer?.disconnect();
+      motionPreference.removeEventListener("change", updateMotion);
+    };
   }, []);
 
   return (
@@ -122,7 +137,7 @@ function Index() {
               Já viu pessoas falando sobre Inteligência Artificial, viu gente criando renda pela internet, mas quando tenta entender como fazer isso na prática, encontra milhares de informações diferentes e não sabe qual caminho seguir.
             </p>
           </div>
-          <div className="glass mt-10 rounded-2xl p-6 sm:p-8">
+          <div className="motion-panel glass mt-10 rounded-2xl p-6 sm:p-8">
             <h3 className="text-sm font-semibold uppercase tracking-widest text-primary">E o pior:</h3>
             <p className="mt-3 text-xl font-semibold leading-snug sm:text-2xl">
               você sabe que a IA está criando novas oportunidades, mas não quer descobrir tarde demais que poderia ter começado antes.
@@ -132,10 +147,10 @@ function Index() {
 
         {/* SOLUÇÃO */}
         <section className="mx-auto max-w-5xl px-5 py-16 lg:py-24">
-          <div className="glass relative overflow-hidden rounded-3xl p-8 sm:p-12">
+          <div className="motion-panel glass relative overflow-hidden rounded-3xl p-8 sm:p-12">
             <div aria-hidden="true" className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-glow-blue/25 blur-3xl" />
             <div className="relative grid items-center gap-8 md:grid-cols-[auto_1fr]">
-              <div className="font-display text-8xl font-bold leading-none text-gradient sm:text-9xl">30</div>
+              <div className="motion-number font-display text-8xl font-bold leading-none text-gradient sm:text-9xl">30</div>
               <p className="text-xl leading-relaxed sm:text-2xl">
                 Foi por isso que eu organizei <strong className="text-gradient">30 maneiras diferentes de usar a Inteligência Artificial para buscar uma nova fonte de renda</strong>, desde possibilidades mais simples para começar até modelos que podem ser transformados em negócios.
               </p>
@@ -153,7 +168,7 @@ function Index() {
         <section className="mx-auto max-w-3xl px-5 pb-28 pt-8 text-center sm:pb-32">
           <h2 className="text-3xl font-bold sm:text-5xl">Quer descobrir como <span className="text-gradient">começar?</span></h2>
           <p className="mt-6 text-lg text-muted-foreground">Clique no botão abaixo e envie a mensagem:</p>
-          <p className="glass mx-auto mt-4 max-w-xl rounded-2xl px-5 py-4 text-lg font-semibold">
+          <p className="motion-panel glass mx-auto mt-4 max-w-xl rounded-2xl px-5 py-4 text-lg font-semibold">
             “Eu quero aprender a ganhar dinheiro com Inteligência Artificial.”
           </p>
           <div className="mt-8"><Cta /></div>
@@ -166,7 +181,7 @@ function Index() {
 
       {/* Mobile sticky CTA */}
       <div className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/85 p-3 backdrop-blur sm:hidden">
-        <Button asChild variant="cta" className="mobile-cta w-full text-sm">
+        <Button asChild variant="cta" className="motion-cta mobile-cta w-full text-sm">
         <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
           <WhatsIcon /> <span>QUERO APRENDER GANHAR DINHEIRO COM IA</span>
         </a>
